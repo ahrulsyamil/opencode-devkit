@@ -102,7 +102,7 @@ Profiles are Docker **build targets**, not runtime package installs. Installing 
 
 | Data | Location inside container | Type |
 | --- | --- | --- |
-| OpenCode config, GH CLI settings, Git config | `/home/devkit/.config` | `devkit-config` volume |
+| OpenCode config, GH CLI settings, Git config | `/home/devkit/.config` | `devkit-config` volume, or bind via `DEVKIT_CONFIG_SOURCE` |
 | OpenCode SQLite DB, sessions/credentials, pnpm home | `/home/devkit/.local/share` | `devkit-data` volume |
 | OpenCode logs/state | `/home/devkit/.local/state` | `devkit-state` volume |
 | Build/package caches | `/home/devkit/.cache` | `devkit-cache` volume |

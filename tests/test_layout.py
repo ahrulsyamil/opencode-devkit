@@ -34,7 +34,7 @@ class RepositoryTests(unittest.TestCase):
     def test_persistence_mount_targets_unique(self):
         compose = self.read("compose.yaml")
         mounts = re.findall(r"(?m)^\s+target:\s+(/[^\s]+)", compose)
-        mounts += re.findall(r"(?m)^\s+-\s+devkit-[a-z]+:(/[^\s]+)", compose)
+        mounts += re.findall(r"(?m)^\s+-\s+(?:\$\{[^}]+\}|[^:\s]+):(/[^\s]+)", compose)
         self.assertEqual(len(mounts), len(set(mounts)), "duplicate bind/volume targets")
         for path in (
             "/workspace", "/home/devkit/.config", "/home/devkit/.local/share",

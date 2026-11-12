@@ -88,7 +88,7 @@ clean-cache:
 	@echo 'Only known caches cleared; OpenCode data/config and workspace retained.'
 
 config-path:
-	@echo '/home/devkit/.config/opencode/opencode.json (in devkit-config volume)'
+	@echo '/home/devkit/.config/opencode/opencode.json (devkit-config volume, or DEVKIT_CONFIG_SOURCE bind)'
 
 verify:
 	@python3 -m unittest discover -s tests -v

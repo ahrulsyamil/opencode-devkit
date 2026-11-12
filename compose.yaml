@@ -30,7 +30,7 @@ services:
       - type: bind
         source: ${WORKSPACE_DIR:-./workspace}
         target: /workspace
-      - devkit-config:/home/devkit/.config
+      - ${DEVKIT_CONFIG_SOURCE:-devkit-config}:/home/devkit/.config
       - devkit-data:/home/devkit/.local/share
       - devkit-state:/home/devkit/.local/state
       - devkit-cache:/home/devkit/.cache
