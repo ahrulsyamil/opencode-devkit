@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Python layout tests and JSON
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 -m json.tool config/opencode.json >/dev/null
+          node tests/test_healthcheck.mjs
+      - name: Validate shell syntax and shellcheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck
+          bash -n scripts/*.sh
+          shellcheck scripts/*.sh
+      - name: Validate Compose with a dummy test secret
+        run: |
+          cp .env.example .env
+          sed -i 's/^OPENCODE_PASSWORD=.*/OPENCODE_PASSWORD=ci-only-dummy-please-ignore/' .env
+          docker compose config --quiet
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.2.0
+        with:
+          dockerfile: Dockerfile
+          config: .hadolint.yaml
+
+  integration:
+    runs-on: ubuntu-latest
+    needs: validate
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize temporary CI credentials
+        run: |
+          make init
+          sed -i 's/^DEVKIT_PROFILE=.*/DEVKIT_PROFILE=minimal/' .env
+      - name: Build and start minimal profile
+        run: |
+          docker compose build --pull opencode
+          docker compose up -d --no-build
+      - name: Wait until healthy
+        run: |
+          for n in $(seq 1 90); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose ps -q opencode)" || true)
+            if [ "$status" = healthy ]; then exit 0; fi
+            if [ "$status" = unhealthy ]; then docker compose logs opencode; exit 1; fi
+            sleep 2
+          done
+          docker compose logs opencode
+          exit 1
+      - name: Smoke and persistence tests
+        run: |
+          make smoke
+          make test-persistence
+      - name: Scan container for critical vulnerabilities
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: opencode-devkit:local
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
+      - name: Container diagnostics
+        if: always()
+        run: |
+          docker compose ps || true
+          docker compose logs --tail=100 || true
+          docker compose down || true
+
+  multiarch:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    needs: validate
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [minimal, browser]
+        platform: [linux/amd64, linux/arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: ${{ matrix.profile }}
+          platforms: ${{ matrix.platform }}
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  browser-diagnostic:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    needs: validate
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start browser profile
+        run: |
+          make init
+          docker compose up -d --build --wait
+      - name: CLI smoke
+        run: make smoke
+      - name: Real Chromium launch diagnostic
+        continue-on-error: true # Docker hosts vary in browser namespace/sandbox support.
+        run: docker compose exec -T opencode sh -ec 'agent-browser open about:blank && agent-browser snapshot && agent-browser close'
+      - name: Cleanup
+        if: always()
+        run: docker compose down || true

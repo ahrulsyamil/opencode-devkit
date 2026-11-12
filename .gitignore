@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+workspace/*
+!workspace/.gitkeep
+local/
+backups/
+*.tar.gz
+*.zip
+__pycache__/
+.pytest_cache/
+.DS_Store

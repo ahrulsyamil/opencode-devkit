@@ -1,0 +1,10 @@
+# Opt-in: copy this file locally and create ./local/ssh with your own key material.
+# Usage: docker compose -f compose.yaml -f examples/compose.ssh.yaml up -d
+# Beware that the bind path resolves relative to the first Compose file's directory.
+services:
+  opencode:
+    volumes:
+      - type: bind
+        source: ./local/ssh
+        target: /home/devkit/.ssh
+        read_only: true

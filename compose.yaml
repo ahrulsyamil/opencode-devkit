@@ -1,0 +1,48 @@
+name: opencode-devkit
+services:
+  opencode:
+    image: ${DEVKIT_IMAGE:-opencode-devkit:local}
+    build:
+      context: .
+      target: ${DEVKIT_PROFILE:-browser}
+      args:
+        OPENCODE_VERSION: ${OPENCODE_VERSION:-2.2.7}
+        DEV_UID: ${DEV_UID:-1000}
+        DEV_GID: ${DEV_GID:-1000}
+        PNPM_VERSION: ${PNPM_VERSION:-10.24.0}
+        AGENT_BROWSER_VERSION: ${AGENT_BROWSER_VERSION:-0.42.0}
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 512
+    ports:
+      - "${OPENCODE_BIND:-127.0.0.1}:${OPENCODE_PORT:-4095}:4095"
+    environment:
+      TZ: ${TZ:-Asia/Jakarta}
+      OPENCODE_PASSWORD: ${OPENCODE_PASSWORD:?Set OPENCODE_PASSWORD in .env (make init)}
+    command: ["serve", "--hostname", "0.0.0.0", "--port", "4095"]
+    working_dir: /workspace
+    volumes:
+      - type: bind
+        source: ${WORKSPACE_DIR:-./workspace}
+        target: /workspace
+      - devkit-config:/home/devkit/.config
+      - devkit-data:/home/devkit/.local/share
+      - devkit-state:/home/devkit/.local/state
+      - devkit-cache:/home/devkit/.cache
+      - devkit-npm:/home/devkit/.npm
+      - devkit-browser:/home/devkit/.agent-browser
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=512m
+
+volumes:
+  devkit-config:
+  devkit-data:
+  devkit-state:
+  devkit-cache:
+  devkit-npm:
+  devkit-browser:

@@ -1,0 +1,6 @@
+# Build the base first:
+# docker build --target browser -t opencode-devkit-base:browser .
+FROM opencode-devkit-base:browser
+USER root
+RUN apk add --no-cache shellcheck
+USER devkit

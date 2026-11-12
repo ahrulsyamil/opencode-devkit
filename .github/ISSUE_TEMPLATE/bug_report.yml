@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a reproducible problem with the development environment
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What did you expect and what happened?
+    validations:
+      required: true
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Profile
+      options: [minimal, web, browser, full, custom]
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, CPU architecture, Docker/Compose version, OpenCode version (no secrets).
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include only sanitized commands and logs. Never paste .env or tokens.
+    validations:
+      required: true

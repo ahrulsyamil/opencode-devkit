@@ -1,0 +1,5 @@
+ignored:
+  # Alpine repository pinning should be handled with snapshots/digests for releases.
+  - DL3018
+  # Explicit npm versions are passed via immutable build args.
+  - DL3016
