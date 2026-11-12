@@ -5,7 +5,7 @@ FROM ghcr.io/anomalyco/opencode:${OPENCODE_VERSION} AS core
 
 ARG DEV_UID=1000
 ARG DEV_GID=1000
-ARG PNPM_VERSION=10.24.0
+ARG PNPM_VERSION=10.34.9
 ENV HOME=/home/devkit \
     TZ=Asia/Jakarta \
     XDG_CONFIG_HOME=/home/devkit/.config \

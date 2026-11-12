@@ -9,7 +9,7 @@ Create with `make init`. It generates a random 256-bit password from `/dev/urand
 | `DEVKIT_PROFILE` | `browser` | Docker build target: minimal/web/browser/full |
 | `DEVKIT_IMAGE` | `opencode-devkit:local` | Local image tag |
 | `OPENCODE_VERSION` | `2.2.7` | Official OpenCode image tag |
-| `PNPM_VERSION` | `10.24.0` | Globally installed pnpm npm version |
+| `PNPM_VERSION` | `10.34.9` | Globally installed pnpm npm version |
 | `AGENT_BROWSER_VERSION` | `0.42.0` | Browser CLI npm version |
 | `DEV_UID`, `DEV_GID` | local user, or `1000` | Image user/group ownership for bind mounts |
 | `TZ` | `Asia/Jakarta` | Runtime timezone |

@@ -9,7 +9,7 @@ services:
         OPENCODE_VERSION: ${OPENCODE_VERSION:-2.2.7}
         DEV_UID: ${DEV_UID:-1000}
         DEV_GID: ${DEV_GID:-1000}
-        PNPM_VERSION: ${PNPM_VERSION:-10.24.0}
+        PNPM_VERSION: ${PNPM_VERSION:-10.34.9}
         AGENT_BROWSER_VERSION: ${AGENT_BROWSER_VERSION:-0.42.0}
     init: true
     restart: unless-stopped

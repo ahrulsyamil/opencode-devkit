@@ -18,7 +18,7 @@ help:
 	@echo 'make backup               Stop and archive persistent volumes'
 	@echo 'make restore FILE=...     Restore trusted backup (interactive)'
 	@echo 'make update-opencode VERSION=2.2.8'
-	@echo 'make update-tools PNPM=10.24.0 AGENT_BROWSER=0.42.0'
+	@echo 'make update-tools PNPM=10.34.9 AGENT_BROWSER=0.42.0'
 	@echo 'make clean-cache          Remove only package caches (service stopped)'
 	@echo 'make config-path          Show location of OpenCode user config'
 	@echo 'make publish-github       Interactive public GitHub publish (requires gh)'
