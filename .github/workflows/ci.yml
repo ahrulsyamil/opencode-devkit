@@ -13,7 +13,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Validate Python layout tests and JSON
         run: |
           python3 -m unittest discover -s tests -v
@@ -41,7 +41,7 @@ jobs:
     needs: validate
     timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Initialize temporary CI credentials
         run: |
           make init
@@ -90,7 +90,7 @@ jobs:
         profile: [minimal, browser]
         platform: [linux/amd64, linux/arm64]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: docker/setup-qemu-action@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/build-push-action@v7
@@ -108,7 +108,7 @@ jobs:
     needs: validate
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Start browser profile
         run: |
           make init
