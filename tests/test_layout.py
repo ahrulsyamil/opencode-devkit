@@ -37,8 +37,8 @@ class RepositoryTests(unittest.TestCase):
         mounts += re.findall(r"(?m)^\s+-\s+(?:\$\{[^}]+\}|[^:\s]+):(/[^\s]+)", compose)
         self.assertEqual(len(mounts), len(set(mounts)), "duplicate bind/volume targets")
         for path in (
-            "/workspace", "/home/devkit/.config", "/home/devkit/.local/share",
-            "/home/devkit/.local/state", "/home/devkit/.cache",
+            "/workspace", "/home/devkit/.config", "/home/devkit/.config/opencode",
+            "/home/devkit/.local/share", "/home/devkit/.local/state", "/home/devkit/.cache",
             "/home/devkit/.npm", "/home/devkit/.agent-browser",
         ):
             self.assertIn(path, mounts)

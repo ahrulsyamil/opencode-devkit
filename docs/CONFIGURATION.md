@@ -16,7 +16,7 @@ Create with `make init`. It generates a random 256-bit password from `/dev/urand
 | `OPENCODE_BIND` | `127.0.0.1` | Host interface for published port |
 | `OPENCODE_PORT` | `4095` | Host-visible TCP port |
 | `WORKSPACE_DIR` | `./workspace` | Host path mounted at `/workspace` |
-| `DEVKIT_CONFIG_SOURCE` | `devkit-config` | Named volume, or a `./`-relative/absolute host path to bind-mount at `/home/devkit/.config` |
+| `OPENCODE_CONFIG_DIR` | `devkit-opencode` | Named volume, or a `./`-relative/absolute host path bind-mounted at `/home/devkit/.config/opencode` |
 | `OPENCODE_PASSWORD` | randomly generated | OpenCode HTTP Basic Auth password; never commit |
 
 The server listens on **container port 4095**. Changing `OPENCODE_PORT` changes only the host port; the healthcheck still probes internal port 4095.
@@ -58,25 +58,25 @@ git config --global user.email "you@example.com"
 
 SSH is **opt in**. Copy `examples/compose.ssh.yaml` locally and use it explicitly; file ownership/permissions must match the container runtime user. Never commit private keys or mount your whole home directory.
 
-## Bind-mounting the config directory
+## Bind-mounting the OpenCode config
 
-By default `~/.config` lives in the `devkit-config` named volume. Set `DEVKIT_CONFIG_SOURCE` in `.env` to a host path to switch to a bind mount (Compose treats sources starting with `./` or `/` as paths):
+Only the OpenCode config directory (`/home/devkit/.config/opencode`) is switchable; Git/npm config stay in the `devkit-config` volume. Set `OPENCODE_CONFIG_DIR` in `.env` to a host path to switch from the nested `devkit-opencode` named volume to a bind mount (Compose treats sources starting with `./` or `/` as paths):
 
 ```bash
-DEVKIT_CONFIG_SOURCE=./config
+OPENCODE_CONFIG_DIR=./opencode-config
 ```
 
-To migrate existing config out of the named volume first:
+To migrate existing config out of a named volume first:
 
 ```bash
 make down
-mkdir -p config
-docker run --rm -v opencode-devkit_devkit-config:/src:ro -v "$PWD/config:/dst" alpine cp -a /src/. /dst/
-sudo chown -R "$(awk -F= '$1=="DEV_UID"{print $2}' .env):$(awk -F= '$1=="DEV_GID"{print $2}' .env)" config  # Linux only
+mkdir -p opencode-config
+docker run --rm -v opencode-devkit_devkit-opencode:/src:ro -v "$PWD/opencode-config:/dst" alpine cp -a /src/. /dst/
+sudo chown -R "$(awk -F= '$1=="DEV_UID"{print $2}' .env):$(awk -F= '$1=="DEV_GID"{print $2}' .env)" opencode-config  # Linux only
 make up
 ```
 
-On Linux the host directory must be writable by `DEV_UID`/`DEV_GID` (Docker creates missing bind paths as root). On macOS/Windows Docker Desktop usually handles this via file sharing. The migration container path above assumes the default project name; check `docker volume ls` if unsure. `make backup`/`make restore` keep working because they operate on container paths.
+Config created before the nested volume existed lives in `devkit-config` instead; copy from `opencode-devkit_devkit-config:/src/opencode` in that case. On Linux the host directory must be writable by `DEV_UID`/`DEV_GID` (Docker creates missing bind paths as root). On macOS/Windows Docker Desktop usually handles this via file sharing. Check `docker volume ls` if unsure of the exact volume name. `make backup`/`make restore` keep working because they operate on container paths.
 
 ## Non-root UID/GID
 
