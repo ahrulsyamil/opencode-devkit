@@ -24,6 +24,7 @@ services:
     environment:
       TZ: ${TZ:-Asia/Jakarta}
       OPENCODE_PASSWORD: ${OPENCODE_PASSWORD:?Set OPENCODE_PASSWORD in .env (make init)}
+      RTK_DISABLED: "${RTK_DISABLED:-1}"
     command: ["serve", "--hostname", "0.0.0.0", "--port", "4095"]
     working_dir: /workspace
     volumes:

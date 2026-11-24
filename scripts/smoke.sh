@@ -16,6 +16,9 @@ docker compose exec -T opencode sh -ec '
   node --version
   npm --version
   pnpm --version
+  rtk --version
+  rtk hook opencode --help >/dev/null
+  test -r /etc/opencode/plugins/rtk.ts
   if command -v agent-browser >/dev/null 2>&1; then
     agent-browser --version
     test -x "$AGENT_BROWSER_EXECUTABLE_PATH"

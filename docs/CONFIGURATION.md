@@ -11,6 +11,7 @@ Create with `make init`. It generates a random 256-bit password from `/dev/urand
 | `OPENCODE_VERSION` | `2.2.7` | Official OpenCode image tag |
 | `PNPM_VERSION` | `10.34.9` | Globally installed pnpm npm version |
 | `AGENT_BROWSER_VERSION` | `0.42.0` | Browser CLI npm version |
+| `RTK_DISABLED` | `1` | Set to `0` to enable automatic RTK rewriting in OpenCode; does not disable explicit `rtk` commands |
 | `DEV_UID`, `DEV_GID` | local user, or `1000` | Image user/group ownership for bind mounts |
 | `TZ` | `Asia/Jakarta` | Runtime timezone |
 | `OPENCODE_BIND` | `127.0.0.1` | Host interface for published port |
@@ -45,6 +46,12 @@ docker compose cp config/opencode.json opencode:/home/devkit/.config/opencode/op
 ```
 
 This overwrites the persistent copy, so back it up first. The recommended path for project-specific OpenCode config is a `opencode.json(c)` file inside that project workspace.
+
+## RTK
+
+[RTK OSS](https://github.com/rtk-ai/rtk) is included in every image profile. Inside the container, run `rtk git status` for condensed shell output or `rtk gain` to see local token savings.
+
+Set `RTK_DISABLED=0` in `.env` and run `make up` to let the bundled OpenCode plugin automatically rewrite supported agent shell commands. No `rtk init` is needed. Automatic rewriting is off by default because RTK does not account for every source of OpenCode V2 permissions and policies. If you rely on custom shell restrictions, leave it off. With rewriting enabled, prefix a command with `RTK_DISABLED=1` to keep its original output.
 
 ## Git identity and SSH
 

@@ -7,6 +7,7 @@ Choose `DEVKIT_PROFILE` in `.env` and run `make up`. Each name is an exact Docke
 | OpenCode and core Unix utilities | ✓ | ✓ | ✓ | ✓ |
 | Git, SSH client, curl/wget, jq/yq, rg/fd/fzf | ✓ | ✓ | ✓ | ✓ |
 | Node.js, npm, pinned pnpm | ✓ | ✓ | ✓ | ✓ |
+| [RTK OSS CLI and optional OpenCode integration](CONFIGURATION.md#rtk) | ✓ | ✓ | ✓ | ✓ |
 | Python, pip, uv | — | ✓ | — | ✓ |
 | PostgreSQL, MariaDB/MySQL, Redis, SQLite CLIs | — | ✓ | — | ✓ |
 | agent-browser native CLI | — | — | ✓ | ✓ |

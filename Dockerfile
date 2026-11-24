@@ -17,6 +17,7 @@ ENV HOME=/home/devkit \
     NPM_CONFIG_USERCONFIG=/home/devkit/.config/npm/npmrc \
     GIT_CONFIG_GLOBAL=/home/devkit/.config/git/config \
     HISTFILE=/home/devkit/.local/state/bash_history \
+    RTK_DISABLED=1 \
     PATH=/home/devkit/.local/share/pnpm:$PATH
 
 # All core packages are part of immutable image layers, not container writable state.
@@ -39,6 +40,30 @@ RUN set -eux; \
       /home/devkit/.npm \
       /home/devkit/.agent-browser \
       /workspace
+
+# RTK OSS release assets and matching upstream OpenCode plugin. Keep the
+# version and all three checksums in sync when upgrading.
+ARG TARGETARCH
+RUN set -eux; \
+  rtk_version=v1.2.1; \
+  case "$TARGETARCH" in \
+    amd64) rtk_arch=x86_64; rtk_sha=44aa460c4827d206d11405c652832c9f7082edccfbc3a9f15a69a851e8a9e8b4 ;; \
+    arm64) rtk_arch=aarch64; rtk_sha=b01860ae2d3f44e0f7fc4431a95dd66b29b4bd87ec7f5e60aff13681b05db5dd ;; \
+    *) echo "Unsupported RTK architecture: $TARGETARCH" >&2; exit 1 ;; \
+  esac; \
+  tmp_dir="$(mktemp -d)"; \
+  asset="rtk-oss-${rtk_arch}-unknown-linux-musl.tar.gz"; \
+  plugin_sha=f1b1a99842616e824c30612cc37c67e4b75d38f2346accbe79c240cf4bc31368; \
+  curl -fsSL --retry 3 -o "$tmp_dir/$asset" "https://github.com/rtk-ai/rtk/releases/download/${rtk_version}/${asset}"; \
+  curl -fsSL --retry 3 -o "$tmp_dir/rtk.ts" "https://raw.githubusercontent.com/rtk-ai/rtk/${rtk_version}/hooks/opencode/rtk.ts"; \
+  printf '%s  %s\n' "$rtk_sha" "$tmp_dir/$asset" "$plugin_sha" "$tmp_dir/rtk.ts" > "$tmp_dir/checksums"; \
+  sha256sum -c "$tmp_dir/checksums"; \
+  tar -xzf "$tmp_dir/$asset" -C "$tmp_dir" rtk LICENSE; \
+  install -m 0755 "$tmp_dir/rtk" /usr/local/bin/rtk; \
+  install -Dm 0644 "$tmp_dir/LICENSE" /usr/local/share/licenses/rtk/LICENSE; \
+  install -Dm 0644 "$tmp_dir/rtk.ts" /etc/opencode/plugins/rtk.ts; \
+  rtk --version; \
+  rm -rf "$tmp_dir"
 
 COPY config/opencode.json /opt/devkit/defaults/opencode.json
 COPY scripts/entrypoint.sh /usr/local/bin/devkit-entrypoint
