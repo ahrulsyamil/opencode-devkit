@@ -7,7 +7,7 @@ Prefer **declarative image builds** over installing packages manually in running
 Build a base image from the `browser` target and add your own packages:
 
 ```bash
-docker build --target browser --build-arg OPENCODE_VERSION=2.2.7 \
+docker build --target browser --build-arg OPENCODE_VERSION=2.4.2 \
   -t opencode-devkit-base:browser .
 docker build -f examples/Dockerfile.custom -t my-opencode-devkit:latest .
 ```

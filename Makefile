@@ -17,7 +17,7 @@ help:
 	@echo 'make test-persistence     Test config/data/workspace survive recreation'
 	@echo 'make backup               Stop and archive persistent volumes'
 	@echo 'make restore FILE=...     Restore trusted backup (interactive)'
-	@echo 'make update-opencode VERSION=2.2.8'
+	@echo 'make update-opencode VERSION=2.4.2'
 	@echo 'make update-tools PNPM=10.34.9 AGENT_BROWSER=0.42.0'
 	@echo 'make clean-cache          Remove only package caches (service stopped)'
 	@echo 'make config-path          Show location of OpenCode user config'
@@ -70,7 +70,7 @@ restore:
 	@bash scripts/restore.sh '$(FILE)'
 
 update-opencode:
-	@test -n "$(VERSION)" || (echo 'Usage: make update-opencode VERSION=2.2.8' && exit 2)
+	@test -n "$(VERSION)" || (echo 'Usage: make update-opencode VERSION=2.4.2' && exit 2)
 	@sed -i.bak 's/^OPENCODE_VERSION=.*/OPENCODE_VERSION=$(VERSION)/' .env && rm -f .env.bak
 	@$(MAKE) up
 

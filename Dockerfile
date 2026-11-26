@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
-# The official OpenCode image is Alpine/musl as of OpenCode 2.2.7.
-ARG OPENCODE_VERSION=2.2.7
+# The official OpenCode image is Alpine/musl as of OpenCode 2.4.2.
+ARG OPENCODE_VERSION=2.4.2
 FROM ghcr.io/anomalyco/opencode:${OPENCODE_VERSION} AS core
 
 ARG DEV_UID=1000

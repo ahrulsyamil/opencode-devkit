@@ -12,7 +12,7 @@ OpenCode DevKit packages OpenCode, developer utilities, Node.js/npm/pnpm, and an
 ## Highlights
 
 - RTK OSS for shorter shell output in every profile, with opt-in automatic rewriting in OpenCode.
-- Based on the official `ghcr.io/anomalyco/opencode` image, version configurable (default `2.2.7`).
+- Based on the official `ghcr.io/anomalyco/opencode` image, version configurable (default `2.4.2`).
 - Four build targets: `minimal`, `web`, `browser` (default), `full`.
 - Core tooling: Git, SSH client, curl/wget, jq/yq, bash, zip/unzip, make/build-base, rg/fd/fzf, editors and diagnostics.
 - Node.js, npm, and pinned pnpm in every profile; pinned `agent-browser` + Alpine Chromium in browser/full profiles.

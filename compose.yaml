@@ -6,7 +6,7 @@ services:
       context: .
       target: ${DEVKIT_PROFILE:-browser}
       args:
-        OPENCODE_VERSION: ${OPENCODE_VERSION:-2.2.7}
+        OPENCODE_VERSION: ${OPENCODE_VERSION:-2.4.2}
         DEV_UID: ${DEV_UID:-1000}
         DEV_GID: ${DEV_GID:-1000}
         PNPM_VERSION: ${PNPM_VERSION:-10.34.9}
